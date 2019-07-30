@@ -1,0 +1,8 @@
+.map {
+    position: relative;
+}
+.navigation{
+    position: absolute;
+    top:1em;
+    right: 1em;
+}

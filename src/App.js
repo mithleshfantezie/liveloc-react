@@ -1,25 +1,51 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useContext, useReducer } from 'react';
+import { HashRouter, Route, Switch } from 'react-router-dom';
+
+import Home from './pages/home'
+import Context from './context'
+import Reducer from './reducer'
+
+import { ApolloProvider } from 'react-apollo'
+import { ApolloClient } from 'apollo-client'
+import { WebSocketLink } from 'apollo-link-ws'
+import { InMemoryCache } from 'apollo-cache-inmemory'
+import { SubscriptionClient } from "subscriptions-transport-ws";
+
+const GRAPHQL_ENDPOINT = "ws://radiant-lake-34932.herokuapp.com/graphql";
+
+const wsLink = new SubscriptionClient(GRAPHQL_ENDPOINT, {
+  reconnect: true
+});
+
+const link = new WebSocketLink(wsLink);
+
+// const wsLink = new WebSocketLink({
+//   uri: 'wss://localhost:4000/graphql',
+//   options: {
+//     reconnet: true
+//   }
+// })
+
+const client = new ApolloClient({
+  link: link,
+  cache: new InMemoryCache()
+})
+
+
 
 function App() {
+  const initialState = useContext(Context)
+  const [state, dispatch] = useReducer(Reducer, initialState)
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <HashRouter>
+    <ApolloProvider client={client} >
+    <Context.Provider value={{state,dispatch}}>
+    <Switch>
+    <Route path="/" component={Home} />
+    </Switch>
+    </Context.Provider>
+    </ApolloProvider>
+    </HashRouter>
   );
 }
 

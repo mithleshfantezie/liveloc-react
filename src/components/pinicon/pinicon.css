@@ -1,0 +1,12 @@
+.pinMarker {
+position: relative;
+padding: .7em;
+z-index: 150;
+}
+.icon{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform: translate(-50%,-50%);
+    font-size: 1em;
+}
