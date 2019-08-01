@@ -73,10 +73,8 @@ const handleMapClick = (e) => {
     dispatch({type:'CREATE_DRAFT',payload:draft})
     
 }
-console.log(popUp)
 
 const markerClick = (pin) => {
-    console.log('here')
     dispatch({type:'DELETE_DRAFT'})
     setPopup(pin)
 }
@@ -106,6 +104,7 @@ const variables = {
     id
 }
 const { deleteLiveLocation } = await Client.request(DELETE_LIVE_LOCATION_MUTATION,variables)
+dispatch({type:'DELETE_LIVE_LOCATION'})
 setPopup(null)
 
 
@@ -158,7 +157,7 @@ setPopup(null)
         {state.pins && state.pins.map((pin)=>{
             return(
                 <div key={pin._id} onClick={()=>markerClick(pin)} >
-                <Marker latitude={pin.location.coordinates[1]} longitude={pin.location.coordinates[0]}>
+                <Marker latitude={pin.location.coordinates[1]} longitude={pin.location.coordinates[0]}  offsetTop={-20} offsetLeft={-10}>
                 <PinIcon icon={pin.category} color={pin.color} />
                 </Marker>
                 </div>  
@@ -168,7 +167,7 @@ setPopup(null)
         {state.liveLocations && state.liveLocations.map((pin)=>{
             return(
                 <div className="live-location" key={pin._id} onClick={()=>markerClick(pin)} >
-                <Marker latitude={pin.location.coordinates[1]} longitude={pin.location.coordinates[0]}>
+                <Marker latitude={pin.location.coordinates[1]} longitude={pin.location.coordinates[0]}  offsetTop={-20} offsetLeft={-10}>
                 <PinIcon icon={pin.category} color={'red'} />
                 </Marker>
                 </div>  
@@ -179,6 +178,8 @@ setPopup(null)
         
 
 {popUp &&(<Popup
+            style={{marginBottom:'25px'}}
+            offsetTop={-20} offsetLeft={-1}
           latitude={popUp.location.coordinates[1]}
           longitude={popUp.location.coordinates[0]}
           closeButton={true}
@@ -187,11 +188,11 @@ setPopup(null)
               setPopup(null)
           }}
           anchor="bottom" >
-          <div style={{margin:'.5em 0',fontSize:'1em',fontWeight:'500'}}>{popUp.name}</div>
+          <div style={{margin:'0.5em 0px -6px 0px',fontSize:'1em',fontWeight:'500'}}>{popUp.name}</div>
         </Popup>)}
         
         </ReactMapGL>
-        {state.draftPin && (<button className="map-marked" onClick={()=>{modalOpen()}}>
+        {state.draftPin && (<button name="Watch Location" className="map-marked" onClick={()=>{modalOpen()}}>
         <MapMarkedIcon />
         </button>)}
         {userPosition && !state.liveLocation && (<button className="map-eye" onClick={()=>{
@@ -201,7 +202,7 @@ setPopup(null)
         }} >
         <EyeIcon />
         </button>)}
-        {state.liveLocation && state.liveLocation._id &&(<button className="map-eye" onClick={()=>StopWatchLocation()} >
+        {state.liveLocation && state.liveLocation._id &&(<button name="Stop Watching" className="map-eye" onClick={()=>StopWatchLocation()} >
         <EyeSlash />
         </button>)}
 
@@ -226,7 +227,7 @@ setPopup(null)
         <Subscription subscription={LIVE_LOCATION_DELETED_SUBSCRIPTION} 
         onSubscriptionData={({subscriptionData})=>{
             const {liveLocationDeleted} = subscriptionData.data
-            dispatch({type:'DELETE_LIVE_LOCATIONS',payload:liveLocationDeleted._id})
+            dispatch({type:'DELETE_LIVE_LOCATIONS',payload:liveLocationDeleted})
 
         }}
         />

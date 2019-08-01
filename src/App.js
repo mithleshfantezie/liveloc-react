@@ -11,7 +11,7 @@ import { WebSocketLink } from 'apollo-link-ws'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { SubscriptionClient } from "subscriptions-transport-ws";
 
-const GRAPHQL_ENDPOINT = "ws://radiant-lake-34932.herokuapp.com/graphql";
+const GRAPHQL_ENDPOINT = "wss://radiant-lake-34932.herokuapp.com/graphql";
 
 const wsLink = new SubscriptionClient(GRAPHQL_ENDPOINT, {
   reconnect: true

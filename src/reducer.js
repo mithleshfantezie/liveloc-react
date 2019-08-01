@@ -29,9 +29,8 @@ export default function reducer(state,action){
             return {...state,liveLocation:null}
         case 'DELETE_LIVE_LOCATIONS':
                 const deletedLocation = action.payload
-                const LiveLocations = state.liveLocations.filter(location=>location._id !== deletedLocation)
-                return {...state,liveLocations:LiveLocations,liveLocation:null,currentPin:null,draftPin:null}
-
+                const LiveLocations = state.liveLocations.filter(location => location._id !== deletedLocation._id)
+                return {...state,liveLocations:LiveLocations,currentPin:null,draftPin:null}
 
         case 'ADD_LIVELOCATIONS':
             const newLocation = action.payload
@@ -40,11 +39,7 @@ export default function reducer(state,action){
         
         case 'UPDATE_LIVE_LOCATION':
             const updateLocation = action.payload
-            const updatedLiveLocations = state.liveLocations && state.liveLocations.length > 0 && state.liveLocations.map((location)=>{
-               if(location && location._id){
-                   return location._id === updateLocation._id ? location = updateLocation : location 
-               }
-            })
+            const updatedLiveLocations = state.liveLocations.map(location => location._id === updateLocation._id ? location = updateLocation : location)
             return {...state,liveLocations:updatedLiveLocations}
     
         default:

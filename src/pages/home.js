@@ -12,7 +12,6 @@ const [liveLocation,setLiveLocation] = useState(false)
 const [icon, setIcon] =useState(1)
 const [allowLocation,setAllowLocation] = useState(false)
 const [name,setName] = useState('')
-console.log(state)
 const handleSubmit = async () => {
   if(!name) return
   const random = Math.random()*74;
@@ -28,8 +27,6 @@ const handleSubmit = async () => {
     lat
   }
   const {createPin} = await Client.request(CREATE_PIN_MUTATION,variables)
-  console.log(createPin)
-
   dispatch({type:'DELETE_DRAFT'})
   setName('')
   setIcon(1)
@@ -48,9 +45,7 @@ const handleLiveLocation = async () => {
     lat:latitude
   }
 
-  const {addLiveLocation} = await Client.request(CREATE_LIVE_LOCATION_MUTATION,variables)
-  console.log('here',addLiveLocation)
-  
+  const {addLiveLocation} = await Client.request(CREATE_LIVE_LOCATION_MUTATION,variables) 
   dispatch({type:'ADD_LIVE_LOCATION',payload:addLiveLocation})
   dispatch({type:'DELETE_DRAFT'})
   dispatch({type:'DESELECT_CURRENT_PIN'})
@@ -64,7 +59,6 @@ const watchUserPosition = (id) => {
   if('geolocation' in navigator) {
       navigator.geolocation.watchPosition(
           async ({coords})=>{
-              console.log(coords)
               const {latitude,longitude} = coords
 
               const variables = {
@@ -94,14 +88,16 @@ const inputs = () => {
   return(
     <div>
     <input name="name" type="text" placeholder="Name" onChange={(e)=>setName(e.target.value)} value={name} />
-        <select onChange={(e)=>setIcon(e.target.value)}>
+        <select name="Location Icon" onChange={(e)=>setIcon(e.target.value)}>
         
         <option value={1}>Person</option>
         <option value={2}>Bike</option>
-        <option value={3}>Plane</option>
+        <option value={3}>Airport</option>
         <option value={4}>Car</option>
         <option value={5}>Bus</option>
         <option value={6}>Home</option>
+        <option value={7}>Running</option>
+        <option value={8}>Flight</option>
         </select>
         </div>
   )
@@ -125,7 +121,7 @@ if(errModal) {
           <p className="desc">Note: Everybody will be able to see your shared location!</p>
             </div>
             <div className="btn-group">
-            <button onClick={()=>setErrModal(false)}>Cancel</button>
+            <button name="Cancel" onClick={()=>setErrModal(false)}>Cancel</button>
             </div>
           </div>
       </Modal>
@@ -145,11 +141,11 @@ return(
         <p className="desc">Note: Everybody will be able to see your shared location!</p>
           </div>
           <div className="btn-group">
-          <button onClick={()=>{
+          <button name="Cancel" onClick={()=>{
             dispatch({type:'DELETE_DRAFT'})
             setModal(false)
           }}>Cancel</button>
-          <button onClick={()=>handleSubmit()}>Okay</button>
+          <button name="Confirm" onClick={()=>handleSubmit()}>Okay</button>
           </div>
           </div>
           </Modal>
@@ -165,11 +161,11 @@ return(
           <p className="desc">Note: Everybody will be able to see your shared location!</p>
             </div>
             <div className="btn-group">
-            <button onClick={()=>{
+            <button  name="Cancel" onClick={()=>{
               dispatch({type:'DELETE_LIVE_LOCATION'})
               setLiveLocation(false)
             }}>Cancel</button>
-            <button onClick={()=>handleLiveLocation()}>Okay</button>
+            <button name="Confirm" onClick={()=>handleLiveLocation()}>Okay</button>
             </div>
             </div>
             </Modal>
