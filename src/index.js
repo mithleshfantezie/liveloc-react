@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
 import { ReactComponent as LiveLocSvg } from './assets/LiveLoc.svg'
-
 const App  = React.lazy(()=>import('./App'))
 
 ReactDOM.render(
