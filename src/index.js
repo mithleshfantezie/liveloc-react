@@ -2,12 +2,13 @@ import React,{ Suspense} from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
+import { ReactComponent as LiveLocSvg } from './assets/LiveLoc.svg'
 
 const App  = React.lazy(()=>import('./App'))
 
 ReactDOM.render(
     <Suspense fallback={<div className="loading">
-    <div><img src="LiveLoc.svg" height="100px" width="70px" alt="logo" /></div>
+    <div><LiveLocSvg/></div>
     <div className="logo">LiveLoc</div>
     <div className="lds-ripple"><div></div><div></div></div>
    </div>}>
