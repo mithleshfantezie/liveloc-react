@@ -1,6 +1,7 @@
 import React,{useState, useEffect, useContext} from 'react'
 import ReactMapGL, {NavigationControl, Marker, Popup} from 'react-map-gl'
 import './map.css'
+import './button.css'
 import './index.css'
 import {PinIcon,PinMarker,MapMarkedIcon,EyeIcon,EyeSlash} from '../pinicon/index';
 import Modal from '../modal/index';
@@ -13,7 +14,7 @@ import { Subscription } from 'react-apollo'
 import Context from '../../context'
 
 
-function Map({modalOpen,liveLocationModal}) {
+function Map({modalOpen,liveLocationModal,liveLocationId}) {
     const {state,dispatch} = useContext(Context)
     const [viewport,setViewport] = useState({
         latitude: 26.5363,
@@ -80,21 +81,7 @@ const markerClick = (pin) => {
 }
 
 const clearWatch = ()=>{
-    if('geolocation' in navigator) {
-        const id =  navigator.geolocation.getCurrentPosition(
-             ({coords})=>{
-                const {latitude,longitude} = coords
-                 setViewport({...viewport,latitude,longitude})
-             },
-             (err)=>{
-                 if(err.code === 1) {
-                     setModal(true)
-                 }
-                 
-             },options
-         )
-     navigator.geolocation.clearWatch(id)
-     }
+navigator.geolocation.clearWatch(liveLocationId)
 }
 
 const StopWatchLocation = async () => {
@@ -128,9 +115,10 @@ setPopup(null)
     
 
     return (
-        <div className="map">
+        <div className="map" tabIndex={-1}>
         <ReactMapGL
         {...viewport}
+        
         onClick={(e)=>handleMapClick(e)}
         onViewportChange={newViewport => setViewport(newViewport)}
         width="100vw"
@@ -192,8 +180,10 @@ setPopup(null)
         </Popup>)}
         
         </ReactMapGL>
-        {state.draftPin && (<button name="Watch Location" className="map-marked" onClick={()=>{modalOpen()}}>
+        {state.draftPin && (<button  className="map-marked" onClick={()=>{modalOpen()}}>
         <MapMarkedIcon />
+        <span>Pin Location</span>
+        
         </button>)}
         {userPosition && !state.liveLocation && (<button className="map-eye" onClick={()=>{
             dispatch({type:'DELETE_DRAFT'})
@@ -201,9 +191,12 @@ setPopup(null)
             liveLocationModal()
         }} >
         <EyeIcon />
+        <span>Share Live Location</span>
+        
         </button>)}
-        {state.liveLocation && state.liveLocation._id &&(<button name="Stop Watching" className="map-eye" onClick={()=>StopWatchLocation()} >
+        {state.liveLocation && state.liveLocation._id &&(<button className="map-eye" onClick={()=>StopWatchLocation()} >
         <EyeSlash />
+        <span>Stop Sharing</span>
         </button>)}
 
         <Subscription subscription={PIN_ADDED_SUBSCRIPTION} 

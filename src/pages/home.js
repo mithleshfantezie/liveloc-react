@@ -11,9 +11,18 @@ const [errModal,setErrModal] = useState(false)
 const [liveLocation,setLiveLocation] = useState(false)
 const [icon, setIcon] =useState(1)
 const [allowLocation,setAllowLocation] = useState(false)
+const [online,setOnline] = useState(true)
 const [name,setName] = useState('')
+const [btnLocation,setBtnLocation] = useState(false)
+const [btnLiveLocation,setBtnLiveLocation] = useState(false)
+const [liveLocationId,setliveLocationId] = useState('')
 const handleSubmit = async () => {
   if(!name) return
+  setBtnLocation(true)
+  if('onLine' in navigator){ 
+   if(!navigator.onLine){
+  return  setOnline(false); 
+  }}
   const random = Math.random()*74;
   const color = Math.round(Number(random))
   // dispatch({type:'SET_ICON_AND_COLOR',payload:{icon:Number(icon),color}})
@@ -30,10 +39,20 @@ const handleSubmit = async () => {
   dispatch({type:'DELETE_DRAFT'})
   setName('')
   setIcon(1)
+  setBtnLocation(false)
   setModal(false)
 }
+
+
+
 const handleLiveLocation = async () => {
   if(!name) return
+  setBtnLiveLocation(true)
+  if('onLine' in navigator){ 
+    if(!navigator.onLine){
+   return  setOnline(false); 
+   }
+  }
   const random = Math.random()*74;
   const color = Math.round(Number(random))
   const {longitude,latitude} = state.liveLocation
@@ -52,12 +71,15 @@ const handleLiveLocation = async () => {
   setName('')
   setIcon(1)
   setLiveLocation(false)
+  setBtnLiveLocation(false)
+
   watchUserPosition(addLiveLocation._id)
 }
 
 const watchUserPosition = (id) => {
+
   if('geolocation' in navigator) {
-      navigator.geolocation.watchPosition(
+     const idLiveLocation =  navigator.geolocation.watchPosition(
           async ({coords})=>{
               const {latitude,longitude} = coords
 
@@ -81,6 +103,7 @@ const watchUserPosition = (id) => {
             maximumAge: 0
           }
       )
+      setliveLocationId(idLiveLocation)
   }
 }
 
@@ -121,7 +144,10 @@ if(errModal) {
           <p className="desc">Note: Everybody will be able to see your shared location!</p>
             </div>
             <div className="btn-group">
-            <button name="Cancel" onClick={()=>setErrModal(false)}>Cancel</button>
+            <button name="Cancel" onClick={()=>{
+              setBtnLocation(false)
+              setBtnLiveLocation(false)
+              setErrModal(false)}}>Cancel</button>
             </div>
           </div>
       </Modal>
@@ -142,10 +168,11 @@ return(
           </div>
           <div className="btn-group">
           <button name="Cancel" onClick={()=>{
+            setBtnLocation(false)
             dispatch({type:'DELETE_DRAFT'})
             setModal(false)
           }}>Cancel</button>
-          <button name="Confirm" onClick={()=>handleSubmit()}>Okay</button>
+          <button disabled={btnLocation} name="Confirm" onClick={()=>handleSubmit()}>{btnLocation ? 'Submitting...' : 'Okay'}</button>
           </div>
           </div>
           </Modal>
@@ -163,16 +190,34 @@ return(
             <div className="btn-group">
             <button  name="Cancel" onClick={()=>{
               dispatch({type:'DELETE_LIVE_LOCATION'})
+              setBtnLiveLocation(false)
               setLiveLocation(false)
             }}>Cancel</button>
-            <button name="Confirm" onClick={()=>handleLiveLocation()}>Okay</button>
+            <button disabled={btnLiveLocation} name="Confirm" onClick={()=>handleLiveLocation()}>{btnLiveLocation ? 'Submitting...' : 'Okay'}</button>
             </div>
             </div>
             </Modal>
       )
       }
+      {
+        !online && (
+             <Modal>
+             <div className="modal-content">
+               <div className="contents">
+             <p className="title">Please Check Your Intetnet Connection ?</p>
+             <p className="desc">Note: We require an internet connection to share your location!</p>
+               </div>
+               <div className="btn-group">
+               <button  name="Cancel" onClick={()=>{
+                 setOnline(true)
+               }}>Cancel</button>
+               </div>
+               </div>
+               </Modal>
+         )
+         }
     
-    <Map allowLoc={allowLocation} modalOpen={()=>openModal()} liveLocationModal={()=>openLiveLocation()} />
+    <Map allowLoc={allowLocation} modalOpen={()=>openModal()} liveLocationModal={()=>openLiveLocation()} liveLocationId={liveLocationId} />
     </div>
 )
 }

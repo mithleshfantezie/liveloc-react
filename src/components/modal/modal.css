@@ -52,6 +52,9 @@ font-weight:550;
 color:#7a1992;
 transition: .4s;
 }
+.modal .modal-content .btn-group button:disabled {
+    color:#999;
+}
 .modal .modal-content .btn-group button:nth-child(1) {
     border-right:1px solid #999;
     color:#111;

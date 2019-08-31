@@ -18,14 +18,6 @@ const wsLink = new SubscriptionClient(GRAPHQL_ENDPOINT, {
 });
 
 const link = new WebSocketLink(wsLink);
-
-// const wsLink = new WebSocketLink({
-//   uri: 'wss://localhost:4000/graphql',
-//   options: {
-//     reconnet: true
-//   }
-// })
-
 const client = new ApolloClient({
   link: link,
   cache: new InMemoryCache()
