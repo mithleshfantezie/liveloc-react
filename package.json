@@ -19,7 +19,7 @@
     "react-router-dom": "^5.0.1",
     "react-scripts": "3.0.1",
     "subscriptions-transport-ws": "^0.9.16",
-    "graphql/language/printer":"*"
+    "graphql":"*"
   },
   "scripts": {
     "start": "react-scripts start",
